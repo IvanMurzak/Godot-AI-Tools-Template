@@ -1,0 +1,21 @@
+.github/workflows/test.yml-sample
+  s_d6b528f71c68c2::t_ab5d021e471a9d 87-96,126,128,131-193
+docs/ci.md
+  s_d6b528f71c68c2::t_e1add46e727642 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "95c8d3f95bd00fd83deb0d580f1d26315b3a8a84",
+  "prompts": {},
+  "sessions": {
+    "s_d6b528f71c68c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-acb242b108ba2684d",
+        "model": "unknown"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    }
+  }
+}
