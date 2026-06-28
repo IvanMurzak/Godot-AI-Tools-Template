@@ -1,0 +1,29 @@
+.github/workflows/release.yml-sample
+  s_37efb2bacad966::t_9ef246dd8e2789 37
+src/Godot-AI-YOUR_FEATURE/Godot-AI-YOUR_FEATURE.csproj
+  s_adf60e3981f6ec::t_d48fe2498eccfa 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "ca1fe5975931a84e6e0f3fffefa78955453197f3",
+  "prompts": {},
+  "sessions": {
+    "s_37efb2bacad966": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a82d6d0246b3094fc",
+        "model": "unknown"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    },
+    "s_adf60e3981f6ec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ae02d7dd5d033e13e",
+        "model": "unknown"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    }
+  }
+}
