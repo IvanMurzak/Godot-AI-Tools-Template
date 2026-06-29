@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
 
@@ -108,11 +108,25 @@ jobs:
       # payload under <rid>/), so the download step resolves the real path with `find`.
       SERVER_ASSET: gamedev-mcp-server-linux-x64.zip
       SERVER_BIN_NAME: gamedev-mcp-server
+      # ── CLASS-B (addon-dependent) extensions ONLY ────────────────────────────────────────────────
+      # A CLASS-B extension wraps a THIRD-PARTY Godot addon, so CI must install that addon into the
+      # testbed BEFORE the import below (so its class_name / GDExtension types register and the
+      # extension's presence-gated tools see them). `init` leaves these EMPTY, so the "Install the
+      # third-party addon" step below is a NO-OP and a CLASS-A leg is unchanged. A Class-B author fills
+      # them in their activated test.yml (see the create-extension pipeline step 02 "Class B" branch):
+      #   ADDON_REPO — owner/name of the addon's GitHub repo (the release zip is downloaded from here).
+      #   ADDON_TAG  — the RELEASE TAG to pin (never @latest — keeps the leg reproducible).
+      #   ADDON_DIR  — the folder name under testbed/addons/ the addon installs into.
+      #   ADDON_KIND — "gdscript" (class_name addon; a copy is enough) or "gdextension" (needs a linux .so).
+      ADDON_REPO: ""
+      ADDON_TAG: ""
+      ADDON_DIR: ""
+      ADDON_KIND: ""
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
 
@@ -139,6 +153,52 @@ jobs:
         # The extension's tools are auto-discovered only with the core addon present. install-plugin
         # downloads the addon from the Godot-MCP release and enables it.
         run: godot-cli install-plugin testbed
+
+      - name: Install the third-party addon under test (CLASS-B only; pinned)
+        # CLASS-B extensions wrap a THIRD-PARTY Godot addon. Download + unzip the PINNED addon release
+        # into testbed/addons/<ADDON_DIR>/ BEFORE the import below, so its class_name (GDScript) or
+        # ClassDB/singleton (GDExtension) types are registered when the editor imports and the
+        # extension's presence-gated tools run against a real installed addon.
+        #   • NO-OP for CLASS-A: when ADDON_REPO is empty the step exits 0 immediately, so a built-in-feature
+        #     extension's e2e leg behaves exactly as before this step existed.
+        #   • The addon is a CI-TIME DOWNLOAD only — never vendored into the extension repo (keeps it free of
+        #     someone else's licence + avoids a stale copy). CI just simulates a consumer who installed it.
+        #   • Pin a RELEASE TAG (never @latest) so the leg is reproducible and an upstream class/property rename
+        #     can't turn it red out of nowhere.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ADDON_REPO}" ]; then
+            echo "ADDON_REPO is empty — Class-A extension (no third-party addon). Skipping."
+            exit 0
+          fi
+          : "${ADDON_TAG:?ADDON_TAG must pin a release tag when ADDON_REPO is set}"
+          : "${ADDON_DIR:?ADDON_DIR must name the addons/ folder when ADDON_REPO is set}"
+          rm -rf _addon && mkdir -p _addon testbed/addons
+          # Prefer the GitHub Release zip (versioned, stable; ships the addons/<x>/ tree). Fall back to a
+          # shallow tag clone when the release carries no zip asset.
+          if gh release download "${ADDON_TAG}" --repo "${ADDON_REPO}" --pattern '*.zip' --dir _addon --clobber 2>/dev/null; then
+            unzip -o -q "$(find _addon -maxdepth 1 -name '*.zip' | head -n1)" -d _addon
+          else
+            echo "No release zip on ${ADDON_REPO}@${ADDON_TAG}; falling back to a shallow tag clone."
+            git clone --depth 1 --branch "${ADDON_TAG}" "https://github.com/${ADDON_REPO}.git" _addon/clone
+          fi
+          # Locate addons/<ADDON_DIR>/ anywhere in the extracted payload and copy it into the testbed.
+          found="$(find _addon -type d -path "*/addons/${ADDON_DIR}" | head -n1)"
+          if [ -z "${found}" ]; then
+            echo "::error::could not find addons/${ADDON_DIR}/ in ${ADDON_REPO}@${ADDON_TAG} (release zip nor tag clone)."
+            exit 1
+          fi
+          rm -rf "testbed/addons/${ADDON_DIR}"
+          cp -R "${found}" "testbed/addons/${ADDON_DIR}"
+          # A GDExtension addon must ship a linux-x64 .so (the runner is linux); the editor needs it present
+          # BEFORE import to register the native classes. Fail loudly on a Windows-only release.
+          if [ "${ADDON_KIND}" = "gdextension" ] && ! find "testbed/addons/${ADDON_DIR}" -name '*.so' | grep -q .; then
+            echo "::error::ADDON_KIND=gdextension but no linux .so under testbed/addons/${ADDON_DIR} — the addon release must ship a linux-x64 binary."
+            exit 1
+          fi
+          echo "Installed ${ADDON_REPO}@${ADDON_TAG} -> testbed/addons/${ADDON_DIR} (kind=${ADDON_KIND:-gdscript})."
 
       - name: Align testbed Godot.NET.Sdk to the matrix version
         run: |
