@@ -1,0 +1,25 @@
+docs/source-only-nuget-recipe.md
+  s_f593e7fa05bb4b::t_b01c9b05cc6cd9 33-34
+src/Godot-AI-YOUR_FEATURE/Godot-AI-YOUR_FEATURE.csproj
+  s_f593e7fa05bb4b::t_8c3f6b1a393d57 68-69
+testbed/YOUR_FEATURE-Testbed.csproj
+  s_f593e7fa05bb4b::t_74baf7ec50066f 26-27
+tests/Godot-AI-YOUR_FEATURE.Tests/Godot-AI-YOUR_FEATURE.Tests.csproj
+  s_f593e7fa05bb4b::t_1243e6b0dfb1c5 29-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2d14995b9cf8dc005fac03053e4ef0a0116a074a",
+  "prompts": {},
+  "sessions": {
+    "s_f593e7fa05bb4b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ea515913-4e3a-4132-812b-63654f40f578",
+        "model": "unknown"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    }
+  }
+}
