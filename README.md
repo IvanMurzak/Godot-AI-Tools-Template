@@ -112,6 +112,6 @@ to the shared catalog `addons/godot_mcp/extensions.catalog.json` in **Godot-MCP*
 
 - `docs/source-only-nuget-recipe.md` — the packaging recipe (the centerpiece).
 - `docs/ci.md` — workflows, the version gate, the multi-Godot matrix, required secrets.
-- `CLAUDE.md` — notes for maintaining this template.
+- `AGENTS.md` — agent notes for maintaining this template.
 
 License: **Apache-2.0**.
