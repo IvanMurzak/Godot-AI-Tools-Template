@@ -24,15 +24,15 @@ The package id is always `com.IvanMurzak.Godot.MCP.<Feature>`, written literally
   - `Runtime/Tools/` — `[AiToolType]` root + pure-managed tools (outside `#if TOOLS`, unit-testable).
   - `Editor/Tools/` — editor-driving tools (behind `#if TOOLS`, main-thread-marshalled, E2E-verified only).
   - `build/com.IvanMurzak.Godot.MCP.YOUR_FEATURE.props` — source-injection props (must stay `<PackageId>.props`).
-- `tests/Godot-AI-YOUR_FEATURE.Tests/` — xUnit specs for pure-managed sources; each one is listed in the
-  test csproj `<Compile Include>`.
+- `tests/Godot-AI-YOUR_FEATURE.Tests/` — xUnit specs for pure-managed sources only; add each new one to
+  the test csproj `<Compile Include>` list.
 - `tests/e2e/` — live `run-tool` E2E driver (`run_tool_e2e.py`) + per-extension tool list (`e2e-tools.json`).
 - `testbed/` — consumer `Godot.NET.Sdk` project restoring the local-packed package (injection proof).
 - `commands/` — `init`, `bump-version`, `get-version`, `update-core` (`.ps1` + `.py`).
 - `.github/workflows/*.yml-sample` — CI, inert until `init`. Never commit live `.github/workflows/*.yml` here.
 - `docs/` — `source-only-nuget-recipe.md` (the packaging recipe, the centerpiece, + consumer story);
   `ci.md` (workflows, version gate, multi-Godot matrix, the `NUGET_API_KEY` secret).
-- `README.md` — user-facing scaffold → init → write → build/test → publish → install walkthrough.
+- `README.md` — user walkthrough: scaffold → init → write → build/test → publish → install.
 
 ## Build / test (no Godot binary)
 
