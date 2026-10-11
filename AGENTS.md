@@ -28,7 +28,7 @@ The package id is always `com.IvanMurzak.Godot.MCP.<Feature>`, written literally
   the test csproj `<Compile Include>` list.
 - `tests/e2e/` — live `run-tool` E2E driver (`run_tool_e2e.py`) + per-extension tool list (`e2e-tools.json`).
 - `testbed/` — consumer `Godot.NET.Sdk` project restoring the local-packed package (injection proof).
-- `commands/` — `init`, `bump-version`, `get-version`, `update-core` (`.ps1` + `.py`).
+- `commands/` — `init`, `bump-version`, `update-core` (`.ps1` + `.py`), `get-version.ps1`.
 - `.github/workflows/*.yml-sample` — CI, inert until `init`. Never commit live `.github/workflows/*.yml` here.
 - `docs/` — `source-only-nuget-recipe.md` (the packaging recipe, the centerpiece, + consumer story);
   `ci.md` (workflows, version gate, multi-Godot matrix, the `NUGET_API_KEY` secret).
